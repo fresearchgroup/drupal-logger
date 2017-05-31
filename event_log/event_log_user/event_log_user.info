@@ -1,0 +1,12 @@
+name = Event Log User events
+description = "Logs user CRUD events."
+core = 7.x
+package = Statistics
+dependencies[] = event_log
+
+; Information added by Drupal.org packaging script on 2017-01-17
+version = "7.x-1.6"
+core = "7.x"
+project = "event_log"
+datestamp = "1484645888"
+

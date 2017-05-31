@@ -1,0 +1,14 @@
+name="Delete Log"
+discription="To delete log"
+package = Statistics
+dependencies[] = event_log
+
+; Information added by Drupal.org packaging script on 2017-01-17
+
+core="7.x"
+version="7.x-1.0"
+php="7.0.18"
+project = "event_log"
+datestamp = "1484645888"
+
+configure = admin/config/deletelog
