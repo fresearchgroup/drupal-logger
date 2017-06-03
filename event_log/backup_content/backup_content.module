@@ -1,0 +1,210 @@
+<?php
+/**
+*@file
+*backup content module
+*/
+/**
+*implementation of hook permission
+*/
+function backup_content_permission() {
+  return array(
+    'administer backup' => array(
+      'title' => t('Administer Backup Content'),
+      'description' => t('Perform administration tasks for backup content.'),
+    ),
+  );
+}
+
+
+
+/**
+*implemenatation of hook_menu
+*/
+/*function deletelog_menu() {
+   $items['admin/config/deletelog'] = array(
+  'title' => 'Delete log settings',
+  'type' => MENU_NORMAL_ITEM,
+  'page callback' => 'drupal_get_form',
+'page arguments'=>array('deletelog_admin_form'),
+'access arguments'=>array('administer deletelog'),
+  // Page callback, etc. need to be added here.
+);
+return $items;
+}
+*/
+/**
+* implementation of delete log admin form
+*/
+/*
+function deletelog_admin_form($form ,&$form_state) {
+      $form['deletelog_button'] = array(
+  '#type' => 'submit',
+  '#value' => t('Delete Logs'),
+  '#submit' => array('deletelog_deletedb'),
+);
+
+    return system_settings_form($form);
+
+}
+*/
+/**
+**
+* Deleltion of event_log table
+**
+**/
+/*
+function deletelog_deletedb(){
+//if(variable_get('deletelog_enable',0))
+  //  {
+           //          variable_set('deletelog_enable',0);
+         $query="delete from event_log;";
+         db_query($query);
+    //}  
+
+}
+*/
+/**
+** Implement hook_menu 
+**
+*/
+function backup_content_menu() {
+   $items['admin/config/backup_content'] = array(
+  'title' => 'Backup log content settings',
+  'type' => MENU_NORMAL_ITEM,
+  'page callback' => 'drupal_get_form',
+'page arguments'=>array('backup_content_admin_form'),
+'access arguments'=>array('administer backup'),
+  // Page callback, etc. need to be added here.
+);
+return $items;
+}
+
+/*
+** implement admin form 
+*/
+function backup_content_admin_form($form ,&$form_state) {
+ 
+     $form['backup_content_cron_enable'] = array(
+      '#type' =>'checkbox', 
+      '#title' => t('Enable Backup Content on Cron Run'),
+       '#default_value'=>variable_get('backup_content_cron_enable',0),
+
+);
+
+      $form['backup_content_button'] = array(
+  '#type' => 'submit',
+  '#value' => t('View/Update and Save Backup Content'),
+  '#submit' => array('backup_content_read'),
+);
+ 
+   $form['backup_content_email_text'] = array(
+  '#title' => t('Text to be send as Email'),
+'#type' => 'textarea',
+'#description' => t('Enter some text to send with Email'),
+'#default_value' => variable_get('backup_content_email_text',''),
+);
+
+   $form['backup_content_send_button'] = array(
+  '#type' => 'submit',
+  '#value' => t('Send Backup Content'),
+  '#submit' => array('backup_content_send'),
+);
+
+     // deletelog_deletedb();
+//    drupal_cron_run();
+    return system_settings_form($form);
+
+}
+
+/*implementing reading of backup content */
+function backup_content_read(){
+$query='select * from event_log;';
+
+  /*$results= db_select('event_log','e')->fields('e')->execute()->fetchAssoc();
+      */
+    $result=db_query($query);
+    $results= $result->fetchAll();   
+    //echo gettype($result);
+    $text="";
+            
+  foreach($results as $res) {
+     $text.=$res->lid." ".$res->type." ".$res->operation." ".$res->path." ".$res->form_id." ".$res->ref_numeric." ".$res->ref_char." ".$res->description." ".$res->info." ".$res->uid." ".$res->ip." ".$res->created."\n";
+        /*$text.=$res['lid']." ".$res['type']." ".$res['operation']." ".$res['path']." ".$res['form_id']." ".$res['ref_numeric']." ".$res['ref_char']." ".$res['description']." ".$res['info']." ".$res['uid']." ".$res['ip']." ".$res['created']."<br>";
+      */    
+
+  }
+  variable_set('backup_content_email_text',$text);
+file_save_data($text,"public://backup.txt",FILE_EXISTS_RENAME);
+//  echo $text;
+}
+
+/* Implementing sending of backup data */
+function backup_content_send(){
+   
+   
+  drupal_mail('backup_content','backup_content_email','akshay31057@gmail.com',language_default());
+}
+
+
+/**
+* implementation of hook cron
+*/
+
+function backup_content_cron() {
+    
+
+ if(variable_get('backup_content_cron_enable',0)){
+  backup_content_read();
+  backup_content_send();
+ }
+  /* $query='select * from event_log;';
+
+  
+  //$results= db_select('event_log','e')->fields('e')->execute()->fetchAssoc();
+      
+
+    $result=db_query($query);
+    $results= $result->fetchAll();   
+    //echo gettype($result);
+    $text="";
+            
+  foreach($results as $res) {
+     $text.=$res->lid." ".$res->type." ".$res->operation." ".$res->path." ".$res->form_id." ".$res->ref_numeric." ".$res->ref_char." ".$res->description." ".$res->info." ".$res->uid." ".$res->ip." ".$res->created."\n";
+      //  $text.=$res['lid']." ".$res['type']." ".$res['operation']." ".$res['path']." ".$res['form_id']." ".$res['ref_numeric']." ".$res['ref_char']." ".$res['description']." ".$res['info']." ".$res['uid']." ".$res['ip']." ".$res['created']."<br>";
+          
+
+  }
+  */
+  //file_save_data($text,"public://back.xml",FILE_EXISTS_RENAME);
+  /*
+  if(!file_exists("/var/www/html/drupal/sites/all/modules/event_log/backup_content/backup.txt"))
+  {
+    die("File does not exist");
+  }
+
+  $file=fopen("/var/www/html/drupal/sites/all/modules/event_log/backup_content/backup.txt","a+") or die("Unable to open file");
+
+ //if ($file==true) {
+  fwrite($file,$text);
+//}
+  fclose($file);
+    */  
+}
+
+/**
+*implementation of hook mail
+*/
+
+function backup_content_mail($key, &$message, $params) {
+  switch($key)
+  {
+           case 'backup_content_email':
+    $message['subject']=t('This is Backup Content ');
+    $message['body'][]=t('This is report from backup content on event-log');
+    $message['body'][]=t(variable_get('backup_content_email_text',''));
+    
+                break;
+
+  }
+}
+?>
