@@ -1,0 +1,47 @@
+<?php
+/**
+*@file
+*File Log module
+*/
+/**
+*implementation of hook permission
+*/
+function file_log_permission() {
+  return array(
+    'administer file_log' => array(
+      'title' => t('Administer File Log'),
+      'description' => t('Perform administration tasks for file log.'),
+    ),
+  );
+}
+/**
+*implemenatation of hook_menu
+*/
+function file_log_menu() {
+   $items['admin/config/file_log'] = array(
+  'title' => 'File log settings',
+  'type' => MENU_NORMAL_ITEM,
+  'page callback' => 'drupal_get_form',
+'page arguments'=>array('file_log_admin_form'),
+'access arguments'=>array('administer file_log'),
+  // Page callback, etc. need to be added here.
+);
+return $items;
+}
+/**
+* implementation of delete log admin form
+*/
+function file_log_admin_form($form ,&$form_state) {
+  
+$form['file_log_enable'] = array(
+
+  '#type' =>'checkbox', 
+
+  '#title' => t('Save logs in file'),
+
+  '#default_value' => variable_get('file_log_enable',0),
+);
+    return system_settings_form($form);
+
+}
+?>
