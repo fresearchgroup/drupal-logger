@@ -145,8 +145,34 @@ function event_log_insert(&$log) {
     }
   }
 
+/**
+  *Implements event_log records to a file instead of a database if checkbox is checked
+*/
+  
+  if(variable_get('file_log_enable',0))
+  {
+    if (!file_exists("/var/www/html/drupal-7.54/modules/event_log/eventlog.txt"))
+  { 
+  die('File does not exist');
+  }
+  $myfile = fopen("/var/www/html/drupal-7.54/modules/event_log/eventlog.txt", "a+") or die("Unable to open file!");
+  foreach ($log as $key => $value)
+  {
+  $strlog = "$key $value ";
+  fwrite($myfile, $strlog);
+  }
+  fwrite($myfile,"\n");
+  fclose($myfile);
+  }
 
+/**
+*Logs records to databse by default if checkbox is not checked 
+*/
+
+  else
+  {
   drupal_write_record('event_log', $log);
+  }
 }
 
 /**

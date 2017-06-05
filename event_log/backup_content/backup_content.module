@@ -142,7 +142,8 @@ file_save_data($text,"public://backup.txt",FILE_EXISTS_RENAME);
 function backup_content_send(){
   $site_mail = variable_get('site_mail','');  
   drupal_mail('backup_content','backup_content_email',$site_mail,language_default());
-}
+  
+  }
 
 
 /**
