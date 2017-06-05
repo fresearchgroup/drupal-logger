@@ -140,10 +140,10 @@ file_save_data($text,"public://backup.txt",FILE_EXISTS_RENAME);
 
 /* Implementing sending of backup data */
 function backup_content_send(){
-   
-   
-  drupal_mail('backup_content','backup_content_email','akshay31057@gmail.com',language_default());
-}
+  $site_mail = variable_get('site_mail','');  
+  drupal_mail('backup_content','backup_content_email',$site_mail,language_default());
+  
+  }
 
 
 /**
