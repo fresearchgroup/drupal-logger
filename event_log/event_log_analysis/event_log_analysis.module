@@ -1,0 +1,134 @@
+<?php
+/**
+* implementataion OF hook_permission
+*/
+function event_log_analysis_permission() {
+  return array(
+    'access viz' => array(
+      'title' => t('Administer Viz'),
+      'description' => t('Access administration viz on my site.'),
+    ),
+    'access vizone' => array(
+      'title' => t('Administer Vizone'),
+      'description' => t('Access administration vizone on my site.'),
+    ),
+    'access viztwo' => array(
+      'title' => t('Administer Viztwo'),
+      'description' => t('Access administration viztwo on my site.'),
+    ),
+    'access vizthree' => array(
+      'title' => t('Administer Vizthree'),
+      'description' => t('Access administration vizthree on my site.'),
+    ),
+    'access config' =>array(
+      'title'=>t('Configuration page'),
+      'description'=>t('Access configuration Page for log analysis'),
+      ),
+  );
+}
+/**
+* implementation of hook_menu
+*/
+
+function event_log_analysis_menu() {
+   $items['viz'] = array(
+      'title'=>'vizualizations',
+      //'type'=>MENU_NORMAL_ITEM,
+      'page callback' => 'event_log_analysis_vizone',
+  'access arguments' =>array('access viz'),
+    );
+   $items['viz/vizone'] = array(
+      'title'=>'vizone',
+      'type'=>MENU_DEFAULT_LOCAL_TASK,
+      'page callback' => 'event_log_analysis_vizone',
+	'access arguments' =>array('access vizone'),
+    );
+   $items['viz/viztwo'] = array(
+      'title'=>'viztwo',
+      'type'=>MENU_LOCAL_TASK,
+      'page callback' => 'event_log_analysis_viztwo',
+  'access arguments' =>array('access viztwo'),
+    );
+   $items['viz/vizthree'] = array(
+      'title'=>'vizthree',
+      'type'=>MENU_LOCAL_TASK,
+      'page callback' => 'event_log_analysis_vizthree',
+  'access arguments' =>array('access vizthree'),
+    );
+   $items['admin/config/event_log_analysis']=array(
+    'title'=>'Config page for log analysis',
+    'page callback' => 'drupal_get_form',
+'page arguments'=>array('event_log_analysis_admin_form'),
+    'access arguments'=>array('access config'),
+    );
+    return $items;
+}
+/**
+* implementation of callback function log analysis vizone
+*/
+function event_log_analysis_vizone() {
+    return   "<div>This is vizone</div>" ;
+  }
+  /**
+* implementation of callback function log analysis viztwo
+*/
+function event_log_analysis_viztwo() {
+    return   "<div>This is viztwo</div>" ;
+  }
+  /**
+* implementation of callback function log analysis vizone
+*/
+function event_log_analysis_vizthree() {
+    return   "<div>This is vizthree</div>" ;
+  }
+/**
+* implementation of callback function log analysis vizone
+*/
+function event_log_analysis_admin_form($form ,&$form_state) {
+    
+   /* $form['select_viz'] = array(
+       '#type' => 'select',
+       '#title' => t('select vizualization'),
+       '#options' => array(
+          0 => t('vizone'),
+         1 => t('viztwo'),
+         2=>t('vizthree'),
+       ),
+       '#default_value' => $category['vizone'],
+       '#description' => t('Set this to <em>vizone</em> if you would like this category to be selected by default.'),
+   );*/
+    
+    $form['submit_button'] = array(
+  '#type' => 'submit',
+  '#value' => t('Go to Viz'),
+  '#submit' => array('event_log_analysis_select'),
+  );
+    return $form;
+  }
+function event_log_analysis_select($form,&$form_state)
+{  /*$value=$form_state['values']['select_viz'];
+  //$value=st($vaecho $value;
+  switch ($value) {
+    case 1:
+       variable_set('event_log_analysis_text','one');
+    drupal_goto('viztwo');
+      break;
+     case 0:
+     variable_set('event_log_analysis_text','zero');
+     drupal_goto('vizone');
+       # code...
+       break;
+       case 2:
+       variable_set('event_log_analysis_text','two');
+        drupal_goto('vizthree');
+         break;
+     default:
+     variable_set('event_log_analysis_text',$value);
+      
+      # code...
+      break;
+  }
+*/
+  drupal_goto('viz');
+}  
+?>
