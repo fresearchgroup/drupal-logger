@@ -1,0 +1,13 @@
+name = Log Data Visualization
+description = "Visualizes event log data"
+core = 7.x
+dependencies[]=event_log
+dependencies[]=d3
+package = Visualization
+
+; Information added by Drupal.org packaging script on 2017-01-17
+version = "7.x-1.6"
+core = "7.x"
+project = "log_data_visualization"
+datestamp = "1484645888"
+

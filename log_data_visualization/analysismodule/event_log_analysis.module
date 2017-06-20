@@ -1,0 +1,328 @@
+<?php
+/**
+* implementataion OF hook_permission
+*/
+function event_log_analysis_permission() {
+  return array(
+    'access viz' => array(
+      'title' => t('Administer Viz'),
+      'description' => t('Access administration viz on my site.'),
+    ),
+    'access vizone' => array(
+      'title' => t('Administer Vizone'),
+      'description' => t('Access administration vizone on my site.'),
+    ),
+    'access viztwo' => array(
+      'title' => t('Administer Viztwo'),
+      'description' => t('Access administration viztwo on my site.'),
+    ),
+    'access vizthree' => array(
+      'title' => t('Administer Vizthree'),
+      'description' => t('Access administration vizthree on my site.'),
+    ),
+    'access config' =>array(
+      'title'=>t('Configuration page'),
+      'description'=>t('Access configuration Page for log analysis'),
+      ),
+  );
+}
+/**
+* implementation of hook_menu
+*/
+
+function event_log_analysis_menu() {
+   $items['viz'] = array('title' => 'Event Log Visualizations',
+    'description' => 'Different event log visualizations using d3.',
+    'page callback' => 'event_log_analysis_linegraph',
+    'access arguments' => array('access viz'),
+    );
+   $items['viz/vizone'] = array(
+      'title' => 'Line graph',
+    'description' => 'Uses d3 module to create a line graph',
+    'access callback' => TRUE,
+    'page callback' => 'event_log_analysis_linegraph',
+    'type' => MENU_DEFAULT_LOCAL_TASK,    );
+   $items['viz/viztwo'] = array(
+          'title' => 'Bar chart',
+    'description' => 'Uses d3 module to create a bar chart',
+    'access callback' => TRUE,
+    'page callback' => 'event_log_analysis_bar',
+    'type' => MENU_LOCAL_TASK,    );
+   $items['viz/vizthree'] = array(
+          'title' => 'Pie chart',
+    'description' => 'Uses d3 module to create a pie chart.',
+    'access callback' => TRUE,
+    'page callback' => 'event_log_analysis_pie',
+    'type' => MENU_LOCAL_TASK,
+    );
+
+   $items['admin/config/event_log_analysis']=array(
+    'title'=>'Config page for log analysis',
+    'page callback' => 'drupal_get_form',
+'page arguments'=>array('event_log_analysis_admin_form'),
+    'access arguments'=>array('access config'),
+    );
+    return $items;
+}
+/**
+* implementation of callback function log analysis vizone
+*/
+function event_log_analysis_vizone() {
+    return   "<div>This is vizone</div>" ;
+  }
+  /**
+* implementation of callback function log analysis viztwo
+*/
+function event_log_analysis_viztwo() {
+    return   "<div>This is viztwo</div>" ;
+  }
+  /**
+* implementation of callback function log analysis vizone
+*/
+function event_log_analysis_vizthree() {
+    return   "<div>This is vizthree</div>" ;
+  }
+/**
+* implementation of callback function log analysis vizone
+*/
+function event_log_analysis_admin_form($form ,&$form_state) {
+    
+   /* $form['select_viz'] = array(
+       '#type' => 'select',
+       '#title' => t('select vizualization'),
+       '#options' => array(
+          0 => t('vizone'),
+         1 => t('viztwo'),
+         2=>t('vizthree'),
+       ),
+       '#default_value' => $category['vizone'],
+       '#description' => t('Set this to <em>vizone</em> if you would like this category to be selected by default.'),
+   );*/
+    
+    $form['submit_button'] = array(
+  '#type' => 'submit',
+  '#value' => t('Go to Viz'),
+  '#submit' => array('event_log_analysis_select'),
+  );
+    return $form;
+  }
+function event_log_analysis_select($form,&$form_state)
+{  /*$value=$form_state['values']['select_viz'];
+  //$value=st($vaecho $value;
+  switch ($value) {
+    case 1:
+       variable_set('event_log_analysis_text','one');
+    drupal_goto('viztwo');
+      break;
+     case 0:
+     variable_set('event_log_analysis_text','zero');
+     drupal_goto('vizone');
+       # code...
+       break;
+       case 2:
+       variable_set('event_log_analysis_text','two');
+        drupal_goto('vizthree');
+         break;
+     default:
+     variable_set('event_log_analysis_text',$value);
+      
+      # code...
+      break;
+  }
+*/
+  drupal_goto('viz');
+}
+function event_log_analysis_linegraph() {
+  //$query='Select * from'
+  $leg_aux=array();
+  $query2="Select distinct(operation) from event_log ";
+  $k=1;
+  $operate=array();
+  $operatio=db_query($query2);
+  $operations=$operatio->fetchAll(PDO::FETCH_ASSOC);
+  foreach ($operations as $row) {
+    $leg_aux[strval($row['operation'])]=$k++;
+    }
+  $leg=array();
+  foreach ($leg_aux as $key => $value) {
+    array_push($leg,strval($key));
+    
+  }
+  $query="Select operation, created from event_log ";
+  $result=db_query($query);
+  $results=$result->fetchAll(PDO::FETCH_ASSOC);
+  $arr=array();
+  $final_line=array();
+  $h=0;
+  $prev="q";
+  foreach ($results as $row) {
+    $h++;
+    $curop=$row['operation'];
+      $curmonth=strval(date("M-Y",$row['created']));
+
+    if($curmonth!=$prev)
+      {
+        if($h!=1)
+          array_push($final_line,$arr);
+        $prev=strval(date("M-Y",$row['created']));
+        $arr[0]=$curmonth;
+        for($i=1;$i<$k;$i++)
+          $arr[$i]=0;
+        $arr[$leg_aux[$curop]]++;
+      }
+      else 
+      {
+          $arr[$leg_aux[$curop]]++;
+      }
+
+      $prev=$curmonth;
+    /*$arr[0]=strval(date('M-Y',$row['created']));
+   // echo "$arr[0]<br>";
+    $p=strval($row['operation']);
+    
+    $p=$leg_aux[$p];
+    $arr[$p]=100;
+    for( $i=1 ; $i<$k ; $i++ )
+    {
+      if($i != $p)
+        $arr[$i]=50;
+    }
+    if($h==1)
+
+    if($h==1||)
+    array_push($final_line,$arr);
+    */
+  }
+  array_push($final_line, $arr);
+  //echo json_encode($final_line);
+  /*for($i=0;$i<sizeof($final_line);$i++)
+  {
+    for($j=0;$j<$k;$j++)
+    echo $final_line[$i][$j]."<br>";
+  }
+  */
+  /*array(
+      array('1st Quarter 2011', 10, 20, 26, 35,7,8,9),
+      array('2nd Quarter 2011', 20, 26, 27, 37,25,12,54),
+      array('3rd Quarter 2011', 10, 50, 28, 50,7,8,9),
+      array('4th Quarter 2011', 15, 76, 49, 51,25,12,54),
+      array('1st Quarter 2012', 20, 100, 50, 52,7,8,9),
+      array('2nd Quarter 2012', 4, 1, 110, 40,25,12,54,),
+    ),
+    */
+  $chart = array(
+    'id' => 'visualization',
+    'type' => 'linegraph',
+    'legend' => $leg,
+    'rows' =>$final_line,
+  );
+
+  return d3_draw($chart);
+}
+function event_log_analysis_column() {
+
+  $chart = array(
+    'id' => 'visualization',
+    'type' => 'columnchart',
+    'legend' => array(
+      'Development',
+      'QA',
+      'Strategy',
+      'Design',
+    ),
+    'rows' => array(
+      array('1st Quarter 2011', 10, 20, 26, 35),
+      array('2nd Quarter 2011', 20, 26, 27, 37),
+      array('3rd Quarter 2011', 10, 50, 28, 50),
+      array('4th Quarter 2011', 15, 76, 49, 51),
+      array('1st Quarter 2012', 20, 100, 50, 52),
+      array('2nd Quarter 2012', 4, 1, 110, 40),
+    ),
+  );
+
+  return d3_draw($chart);
+}
+
+/**
+ * Generates a random example bar graph.
+ *
+ * @return string
+ *   HTML for the page content.
+ */
+  function event_log_analysis_bar() {
+//$query
+  // Temporary data until I get randomization working.
+  $query = db_query("SELECT operation, count(*) FROM {event_log} GROUP BY operation");
+  $result = $query->fetchAll(PDO::FETCH_ASSOC);
+  $newarray=array();
+  foreach($result as $row)
+  {
+             array_push($newarray,array($row['operation'],$row['count(*)']));
+                 
+  }
+  // Temporary data until I get randomization working.
+  $chart = array(
+    'id' => 'visualization',
+    'type' => 'barchart',
+    'legend' => array(
+      'Operations',
+     
+    ),
+    'rows' => $newarray,
+  );
+
+  /*for ($i = 0; $i < count($chart['rows']); $i++) {
+    for ($j = 0; $j < 4; $j++) {
+      array_push($chart['rows'][$i], rand(1, 70) * rand(1, 70));
+    }
+  }*/
+
+  return d3_draw($chart);
+}
+
+/**
+ * Generates a random pie chart example.
+ *
+ * @return string
+ *   HTML for the page.
+ */
+function event_log_analysis_pie() {
+  $query='SELECT uid,count(operation) FROM event_log GROUP BY uid';
+  $result=db_query($query);
+  $results= $result->fetchAll(PDO::FETCH_ASSOC);   
+    //echo gettype($result);
+//$text="";
+  $ar=array();
+  $final_ar=array();
+  $query2='SELECT * FROM users';
+  $users = array();
+  $temp=array();
+  $userresult=db_query($query2);
+  $userresults=$userresult->fetchAll(PDO::FETCH_ASSOC);
+    /** 
+     *Precomputation to store user names corresponding to their uids
+    */
+  foreach ($userresults as $row) {
+    if($row['uid']==0)
+      $users[$row['uid']]='Anonymous';
+    else $users[$row['uid']]=strval($row['name']);
+      
+    } 
+    /**
+    *Creating user versus count of operations array
+    */
+  foreach($results as $res) {
+    $ar[0]=strval($users[$res['uid']]);
+    $ar[1]=$res['count(operation)'];
+    array_push($final_ar,$ar);
+  }
+  $chart = array(
+    'id' => 'visualization',
+    'type' => 'piechart',
+    'rows' => $final_ar,
+  );
+  return d3_draw($chart);
+}
+
+
+?>

@@ -1,0 +1,109 @@
+<?php
+/**
+*implements hook_permission
+*/
+function user_event_analysis_permission() {
+  return array(
+    'access vizu' => array(
+      'title' => t('Administer User'),
+      'description' => t('Access administration user on my site.'),
+    ),
+    'access user' => array(
+      'title' => t('Administer User Event Analysis'),
+      'description' => t('Access administration for user versus operation analysis.'),
+    ),
+  );
+}
+
+/**
+*implements hook_menu
+*/
+
+
+function user_event_analysis_menu() {
+    $items['vizu'] = array('title' => 'User Event Analysis',
+    'description' => 'Different event log visualizations using d3.',
+    'page callback' => 'user_event_analysis_pie',
+    'access arguments' => array('access vizu'),
+    ); 
+   $items['admin/config/user_event']=array(
+    'title'=>'Configuration page for log analysis',
+    'page callback' => 'drupal_get_form',
+	'page arguments'=>array('user_event_analysis_admin_form'),
+    'access arguments'=>array('access user'),
+    );
+
+
+    return $items;
+}
+
+function user_event_analysis_admin_form($form ,&$form_state) {
+   $query='SELECT uid,name from users';
+   //echo $query;
+   $result=db_query($query);
+   $results=$result->fetchAll(PDO::FETCH_ASSOC);
+   $users=array();
+   foreach ($results as $row) {
+   		if($row['uid']==0)
+    	  $users[$row['uid']]='Anonymous';
+  	 	else 
+  	 	  $users[$row['uid']]=strval($row['name']);
+    
+    } 
+    
+$form['select_user'] = array(
+       '#type' => 'select',
+       '#title' => t('select vizualization'),
+       '#options' => $users,
+       '#default_value' => 1,
+       '#description' => t('Select the User for Event Analysis '),
+   );
+   $form['submit_button'] = array(
+  '#type' => 'submit',
+  '#value' => t('Submit'),
+  '#submit' => array('user_event_analysis_select'),
+  );
+    return $form;
+
+  }
+
+function user_event_analysis_select($form,&$form_state)
+{ 
+  $user=$form_state['values']['select_user']; 
+  $arg=array('query'=>array('userid'=>$user,),);
+  drupal_goto('vizu',$arg);
+  }
+  
+
+function user_event_analysis_pie() {
+if(isset($_GET['userid']))
+	$var=intval($_GET['userid']);
+else 
+	$var=1;
+$query = "SELECT operation,count(operation) FROM `event_log` WHERE uid=".$var." group by operation";
+
+  $result=db_query($query);
+  $ar=array();
+  $final_ar=array();
+  $results=$result->fetchAll(PDO::FETCH_ASSOC);
+ 
+  foreach($results as $res) {
+    $ar[0]=strval($res['operation']);
+    $ar[1]=$res['count(operation)'];
+    array_push($final_ar,$ar);
+  }
+  
+    $chart = array(
+    'id' => 'visualization',
+    'type' => 'piechart',
+    'rows' => $final_ar,
+      );
+  return d3_draw($chart);
+  
+}
+
+
+//$final_ar=array();
+
+
+?>

@@ -1,0 +1,15 @@
+name="Event Log Analysis"
+discription="To analyse and visualize log data"
+package = Visualization
+dependencies[] =d3 
+dependencies[] =event_log
+
+; Information added by Drupal.org packaging script on 2017-01-17
+
+core="7.x"
+version="7.x-1.0"
+php="7.0.18"
+project = "log_data_visualization"
+datestamp = "1484645888"
+
+configure = admin/config/event_log_analysis

@@ -129,6 +129,7 @@ $query='select * from event_log;';
             
   foreach($results as $res) {
      $text.=$res->lid." ".$res->type." ".$res->operation." ".$res->path." ".$res->form_id." ".$res->ref_numeric." ".$res->ref_char." ".$res->description." ".$res->info." ".$res->uid." ".$res->ip." ".$res->created."\n";
+     
         /*$text.=$res['lid']." ".$res['type']." ".$res['operation']." ".$res['path']." ".$res['form_id']." ".$res['ref_numeric']." ".$res['ref_char']." ".$res['description']." ".$res['info']." ".$res['uid']." ".$res['ip']." ".$res['created']."<br>";
       */    
 
