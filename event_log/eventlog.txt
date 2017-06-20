@@ -1,0 +1,6 @@
+#EVENTS ARE LOGGED TO THIS FILE INSTEAD OF DATABASE
+#If you are seeing events being logged to this file then you have checked the box in the #configuration in the file_log feature of the event_log module.
+#Event logs are by default logged to the database.
+
+
+

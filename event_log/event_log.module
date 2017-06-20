@@ -148,21 +148,16 @@ function event_log_insert(&$log) {
 /**
   *Implements event_log records to a file instead of a database if checkbox is checked
 */
+  if($log['operation']=="fail" && !variable_get('file_log_enable',0))     
+    {
+        event_log_login_fail($log);
+                      //checking for more than 3 consecutive login failes
+    }
+
   
   if(variable_get('file_log_enable',0))
   {
-    if (!file_exists("/var/www/html/drupal-7.54/modules/event_log/eventlog.txt"))
-  { 
-  die('File does not exist');
-  }
-  $myfile = fopen("/var/www/html/drupal-7.54/modules/event_log/eventlog.txt", "a+") or die("Unable to open file!");
-  foreach ($log as $key => $value)
-  {
-  $strlog = "$key $value ";
-  fwrite($myfile, $strlog);
-  }
-  fwrite($myfile,"\n");
-  fclose($myfile);
+    event_log_file_log_enable($log);
   }
 
 /**
@@ -173,6 +168,73 @@ function event_log_insert(&$log) {
   {
   drupal_write_record('event_log', $log);
   }
+}
+/**
+*implementation of event_log_login_fail 
+*
+*/
+function event_log_login_fail(&$log)
+{    $user=$log['ref_char'];
+     $timestamp=$log['created'];
+     $query = db_query("SELECT * FROM {users} WHERE  name = :name", array(
+    ':name' => $user,
+    ));
+     
+          
+      $result = $query->fetchAll(PDO::FETCH_ASSOC);
+      
+    if(count($result)>0)
+    { 
+          $email=$result[0]['mail'];
+          $newtimestamp=intval($timestamp)-120;
+          $query=db_query("SELECT * FROM {event_log} WHERE  ref_char = :ref_char and  operation = :operation and created >= :created", array(
+          ':ref_char' => $user,
+          ':operation' => 'fail',
+           ':created' => $newtimestamp,
+        ));
+          $result = $query->fetchAll(PDO::FETCH_ASSOC);
+          if(count($result)>1)
+              {     
+                       
+                          drupal_mail('event_log','event_log_email',$email,language_default(),array(
+                            'ip'=>$log['ip']));
+              }
+          
+  }
+ 
+}
+/**
+*implementation of hook mail
+*/
+function event_log_mail($key, &$message, $params) {
+  switch($key)
+  {
+           case 'event_log_email':
+    $message['subject']=t('Failed Sign-in Attempts ');
+    $message['body'][]=t('This is report you about failed attempts on @site-name with IP address @ip',array('@site-name'=>variable_get('site-name','Drupal site'),
+      '@ip'=>$params['ip']
+      ));
+    $message['body'][]=t("Please ignore this message ,if you forgot the password.");
+    
+                break;
+
+  }
+}
+
+/**
+*Implements function for writing event logs to the file
+*/
+
+function event_log_file_log_enable(&$log)
+{
+  $myfile = fopen("public://eventlog.txt", "a+") or die("Unable to open file!");
+  foreach ($log as $key => $value)
+  {
+  $strlog = "$key $value ";
+  fwrite($myfile, $strlog);
+  }
+  fwrite($myfile,"\n");
+  fclose($myfile);
 }
 
 /**
