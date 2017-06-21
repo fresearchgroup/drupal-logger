@@ -18,8 +18,6 @@ function user_event_analysis_permission() {
 /**
 *implements hook_menu
 */
-
-
 function user_event_analysis_menu() {
     $items['vizu'] = array('title' => 'User Event Analysis',
     'description' => 'Different event log visualizations using d3.',
@@ -39,7 +37,6 @@ function user_event_analysis_menu() {
 
 function user_event_analysis_admin_form($form ,&$form_state) {
    $query='SELECT uid,name from users';
-   //echo $query;
    $result=db_query($query);
    $results=$result->fetchAll(PDO::FETCH_ASSOC);
    $users=array();
@@ -86,7 +83,8 @@ $query = "SELECT operation,count(operation) FROM `event_log` WHERE uid=".$var." 
   $ar=array();
   $final_ar=array();
   $results=$result->fetchAll(PDO::FETCH_ASSOC);
- 
+  if(count($results)==0)
+  	return "<strong>No Log Data</strong>";
   foreach($results as $res) {
     $ar[0]=strval($res['operation']);
     $ar[1]=$res['count(operation)'];
@@ -101,9 +99,4 @@ $query = "SELECT operation,count(operation) FROM `event_log` WHERE uid=".$var." 
   return d3_draw($chart);
   
 }
-
-
-//$final_ar=array();
-
-
 ?>
