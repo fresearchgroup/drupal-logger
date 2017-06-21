@@ -28,9 +28,11 @@ function deletelog_menu() {
 );
 return $items;
 }
+
 /**
-* implementation of delete log admin form
+* implements delete log admin form
 */
+
 function deletelog_admin_form($form ,&$form_state) {
       $form['deletelog_button'] = array(
   '#type' => 'submit',
@@ -41,11 +43,12 @@ function deletelog_admin_form($form ,&$form_state) {
     return system_settings_form($form);
 
 }
+
 /**
-**
-* Deleltion of event_log table
-**
-**/
+*
+* Implements  Deleltion of event_log table
+*
+*/
 function deletelog_deletedb(){
          $query="delete from event_log;";
          db_query($query);

@@ -2,6 +2,7 @@
 /**
 * implementataion OF hook_permission
 */
+/*
 function event_log_analysis_permission() {
   return array(
     'access viz' => array(
@@ -29,7 +30,7 @@ function event_log_analysis_permission() {
 /**
 * implementation of hook_menu
 */
-
+/*
 function event_log_analysis_menu() {
    $items['viz'] = array(
       'title'=>'vizualizations',
@@ -65,25 +66,27 @@ function event_log_analysis_menu() {
 }
 /**
 * implementation of callback function log analysis vizone
-*/
+*//*
 function event_log_analysis_vizone() {
     return   "<div>This is vizone</div>" ;
   }
   /**
 * implementation of callback function log analysis viztwo
 */
+/*
 function event_log_analysis_viztwo() {
     return   "<div>This is viztwo</div>" ;
   }
   /**
 * implementation of callback function log analysis vizone
-*/
+*//*
 function event_log_analysis_vizthree() {
     return   "<div>This is vizthree</div>" ;
   }
 /**
 * implementation of callback function log analysis vizone
 */
+/*
 function event_log_analysis_admin_form($form ,&$form_state) {
     
    /* $form['select_viz'] = array(
@@ -97,7 +100,7 @@ function event_log_analysis_admin_form($form ,&$form_state) {
        '#default_value' => $category['vizone'],
        '#description' => t('Set this to <em>vizone</em> if you would like this category to be selected by default.'),
    );*/
-    
+  /*  
     $form['submit_button'] = array(
   '#type' => 'submit',
   '#value' => t('Go to Viz'),
@@ -128,7 +131,8 @@ function event_log_analysis_select($form,&$form_state)
       # code...
       break;
   }
-*/
+*//*
   drupal_goto('viz');
 }  
+*/
 ?>

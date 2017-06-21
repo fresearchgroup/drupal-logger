@@ -1,4 +1,4 @@
-name="Event Log Analysis"
+name="Event Log FDG"
 discription="To analyse and visualize log data"
 package = Statistics
 dependencies[] = event_log
@@ -11,4 +11,4 @@ php="7.0.18"
 project = "event_log"
 datestamp = "1484645888"
 
-configure = admin/config/event_log_analysis
+configure = admin/config/event_log_fdg
