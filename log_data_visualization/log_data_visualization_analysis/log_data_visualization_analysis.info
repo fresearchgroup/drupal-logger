@@ -1,5 +1,5 @@
-name="User Event Analysis"
-discription="To analyse and visualize events/operations for every user "
+name="Log Data Visualization Analysis"
+discription="To analyse and visualize log data"
 package = Visualization
 dependencies[] =d3 
 dependencies[] =event_log
@@ -12,4 +12,5 @@ php="7.0.18"
 project = "log_data_visualization"
 datestamp = "1484645888"
 
-configure = admin/config/user_event
+configure = admin/config/log_data_visualization_analysis
+

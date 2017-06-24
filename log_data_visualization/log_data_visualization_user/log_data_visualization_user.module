@@ -2,7 +2,7 @@
 /**
 *implements hook_permission
 */
-function user_event_analysis_permission() {
+function log_data_visualization_user_permission() {
   return array(
     'access vizu' => array(
       'title' => t('Administer User'),
@@ -18,16 +18,16 @@ function user_event_analysis_permission() {
 /**
 *implements hook_menu
 */
-function user_event_analysis_menu() {
+function log_data_visualization_user_menu() {
     $items['vizu'] = array('title' => 'User Event Analysis',
     'description' => 'Different event log visualizations using d3.',
-    'page callback' => 'user_event_analysis_pie',
+    'page callback' => 'log_data_visualization_user_pie',
     'access arguments' => array('access vizu'),
     ); 
-   $items['admin/config/user_event']=array(
+   $items['admin/config/log_data_visualization_user']=array(
     'title'=>'Configuration page for log analysis',
     'page callback' => 'drupal_get_form',
-	'page arguments'=>array('user_event_analysis_admin_form'),
+	'page arguments'=>array('log_data_visualization_user_admin_form'),
     'access arguments'=>array('access user'),
     );
 
@@ -35,7 +35,7 @@ function user_event_analysis_menu() {
     return $items;
 }
 
-function user_event_analysis_admin_form($form ,&$form_state) {
+function log_data_visualization_user_admin_form($form ,&$form_state) {
    $query='SELECT uid,name from users';
    $result=db_query($query);
    $results=$result->fetchAll(PDO::FETCH_ASSOC);
@@ -58,13 +58,13 @@ $form['select_user'] = array(
    $form['submit_button'] = array(
   '#type' => 'submit',
   '#value' => t('Submit'),
-  '#submit' => array('user_event_analysis_select'),
+  '#submit' => array('log_data_visualization_user_select'),
   );
     return $form;
 
   }
 
-function user_event_analysis_select($form,&$form_state)
+function log_data_visualization_user_select($form,&$form_state)
 { 
   $user=$form_state['values']['select_user']; 
   $arg=array('query'=>array('userid'=>$user,),);
@@ -72,7 +72,7 @@ function user_event_analysis_select($form,&$form_state)
   }
   
 
-function user_event_analysis_pie() {
+function log_data_visualization_user_pie() {
 if(isset($_GET['userid']))
 	$var=intval($_GET['userid']);
 else 
@@ -100,3 +100,4 @@ $query = "SELECT operation,count(operation) FROM `event_log` WHERE uid=".$var." 
   
 }
 ?>
+

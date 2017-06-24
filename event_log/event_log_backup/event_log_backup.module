@@ -6,7 +6,7 @@
 /**
 *implementation of hook permission
 */
-function backup_content_permission() {
+function event_log_backup_permission() {
   return array(
     'administer backup' => array(
       'title' => t('Administer Backup Content'),
@@ -20,12 +20,12 @@ function backup_content_permission() {
 ** Implement hook_menu 
 **
 */
-function backup_content_menu() {
-   $items['admin/config/backup_content'] = array(
+function event_log_backup_menu() {
+   $items['admin/config/event_log_backup'] = array(
   'title' => 'Backup log content settings',
   'type' => MENU_NORMAL_ITEM,
   'page callback' => 'drupal_get_form',
-'page arguments'=>array('backup_content_admin_form'),
+'page arguments'=>array('event_log_backup_admin_form'),
 'access arguments'=>array('administer backup'),
   // Page callback, etc. need to be added here.
 );
@@ -35,32 +35,32 @@ return $items;
 /*
 ** implement admin form 
 */
-function backup_content_admin_form($form ,&$form_state) {
+function event_log_backup_admin_form($form ,&$form_state) {
  
-     $form['backup_content_cron_enable'] = array(
+     $form['event_log_backup_cron_enable'] = array(
       '#type' =>'checkbox', 
       '#title' => t('Enable Backup Content on Cron Run'),
-       '#default_value'=>variable_get('backup_content_cron_enable',0),
+       '#default_value'=>variable_get('event_log_backup_cron_enable',0),
 
 );
 
-      $form['backup_content_button'] = array(
+      $form['event_log_backup_button'] = array(
   '#type' => 'submit',
   '#value' => t('View/Update and Save Backup Content'),
-  '#submit' => array('backup_content_read'),
+  '#submit' => array('event_log_backup_read'),
 );
  
-   $form['backup_content_email_text'] = array(
+   $form['event_log_backup_email_text'] = array(
   '#title' => t('Text to be send as Email'),
 '#type' => 'textarea',
 '#description' => t('Enter some text to send with Email'),
-'#default_value' => variable_get('backup_content_email_text',''),
+'#default_value' => variable_get('event_log_backup_email_text',''),
 );
 
-   $form['backup_content_send_button'] = array(
+   $form['event_log_backup_send_button'] = array(
   '#type' => 'submit',
   '#value' => t('Send Backup Content'),
-  '#submit' => array('backup_content_send'),
+  '#submit' => array('event_log_backup_send'),
 );
 
     return system_settings_form($form);
@@ -68,7 +68,7 @@ function backup_content_admin_form($form ,&$form_state) {
 }
 
 /*implementing reading of backup content */
-function backup_content_read(){
+function event_log_backup_read(){
 $query='select * from event_log;';
 
     $result=db_query($query);
@@ -80,14 +80,14 @@ $query='select * from event_log;';
       
 
   }
-  variable_set('backup_content_email_text',$text);
+  variable_set('event_log_backup_email_text',$text);
 file_save_data($text,"public://backup.txt",FILE_EXISTS_RENAME);
 }
 
 /* Implementing sending of backup data */
-function backup_content_send(){
+function event_log_backup_send(){
   $site_mail = variable_get('site_mail','');  
-  drupal_mail('backup_content','backup_content_email',$site_mail,language_default());
+  drupal_mail('event_log_backup','event_log_backup_email',$site_mail,language_default());
   
   }
 
@@ -96,12 +96,12 @@ function backup_content_send(){
 * implementation of hook cron
 */
 
-function backup_content_cron() {
+function event_log_backup_cron() {
     
 
- if(variable_get('backup_content_cron_enable',0)){
-  backup_content_read();
-  backup_content_send();
+ if(variable_get('event_log_backup_cron_enable',0)){
+ event_log_backup_read();
+ event_log_backup_send();
  }  
 }
 
@@ -109,16 +109,17 @@ function backup_content_cron() {
 *implementation of hook mail
 */
 
-function backup_content_mail($key, &$message, $params) {
+function event_log_backup_mail($key, &$message, $params) {
   switch($key)
   {
-           case 'backup_content_email':
+           case 'event_log_backup_email':
     $message['subject']=t('This is Backup Content ');
     $message['body'][]=t('This is report from backup content on event-log');
-    $message['body'][]=t(variable_get('backup_content_email_text',''));
+    $message['body'][]=t(variable_get('event_log_backup_email_text',''));
     
                 break;
 
   }
 }
 ?>
+

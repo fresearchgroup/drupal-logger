@@ -1,4 +1,4 @@
-name="Backup content"
+name="Event Log Backup"
 discription="Backup content on cron run"
 package = Statistics
 dependencies[] = event_log
@@ -10,6 +10,7 @@ version="7.x-1.0"
 php="7.0.18"
 project = "event_log"
 datestamp = "1484645888"
-configure = admin/config/backup_content
+configure = admin/config/event_log_backup
+
 
 
