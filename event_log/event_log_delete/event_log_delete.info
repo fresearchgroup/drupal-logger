@@ -1,5 +1,5 @@
-name="Delete Log"
-discription="To delete log"
+name="Event Log Delete"
+discription="To delete log from database"
 package = Statistics
 dependencies[] = event_log
 
@@ -11,4 +11,4 @@ php="7.0.18"
 project = "event_log"
 datestamp = "1484645888"
 
-configure = admin/config/deletelog
+configure = admin/config/event_log_delete

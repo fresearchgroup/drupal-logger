@@ -6,10 +6,10 @@
 /**
 *implementation of hook permission
 */
-function deletelog_permission() {
+function event_log_delete_permission() {
   return array(
-    'administer deletelog' => array(
-      'title' => t('Administer Delete Log'),
+    'administer event_log_delete' => array(
+      'title' => t('Administer Event Log Delete'),
       'description' => t('Perform administration tasks for delete log.'),
     ),
   );
@@ -17,14 +17,13 @@ function deletelog_permission() {
 /**
 *implemenatation of hook_menu
 */
-function deletelog_menu() {
-   $items['admin/config/deletelog'] = array(
+function event_log_delete_menu() {
+   $items['admin/config/event_log_delete'] = array(
   'title' => 'Delete log settings',
   'type' => MENU_NORMAL_ITEM,
   'page callback' => 'drupal_get_form',
-'page arguments'=>array('deletelog_admin_form'),
-'access arguments'=>array('administer deletelog'),
-  // Page callback, etc. need to be added here.
+'page arguments'=>array('event_log_delete_admin_form'),
+'access arguments'=>array('administer event_log_delete'),
 );
 return $items;
 }
@@ -33,23 +32,21 @@ return $items;
 * implements delete log admin form
 */
 
-function deletelog_admin_form($form ,&$form_state) {
-      $form['deletelog_button'] = array(
+function event_log_delete_admin_form($form ,&$form_state) {
+      $form['event_log_delete_button'] = array(
   '#type' => 'submit',
   '#value' => t('Delete Logs'),
-  '#submit' => array('deletelog_deletedb'),
+  '#submit' => array('event_log_delete_deletedb'),
 );
 
     return system_settings_form($form);
-
 }
-
 /**
 *
-* Implements  Deleltion of event_log table
+* Implements  Deletion of event_log table
 *
 */
-function deletelog_deletedb(){
+function event_log_delete_deletedb(){
          $query="delete from event_log;";
          db_query($query);
 
