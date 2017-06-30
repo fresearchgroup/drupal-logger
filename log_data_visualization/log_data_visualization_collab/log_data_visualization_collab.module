@@ -1,0 +1,104 @@
+<?php
+ /**
+*implements hook_permission
+*/
+function log_data_visualization_collab_permission() {
+  return array(
+    'access collab' => array(
+      'title' => t('Administer User'),
+      'description' => t('Access administration user on my site.'),
+    ),
+    'access user' => array(
+      'title' => t('Administer User Event Analysis'),
+      'description' => t('Access administration for user versus operation analysis.'),
+    ),
+  );
+}
+
+/**
+*implements hook_menu
+*/
+function log_data_visualization_collab_menu() {
+    $items['collab'] = array('title' => 'Top 10 Viewed Articles By User',
+    'description' => 'This page shows top 10 viewed articles and corresponding tags by user',
+    'page callback' => 'log_data_visualization_collab_view',
+    'access arguments' => array('access collab'),
+    ); 
+   $items['admin/config/log_data_visualization_collab']=array(
+    'title'=>'Configuration page for log analysis',
+    'page callback' => 'drupal_get_form',
+	'page arguments'=>array('log_data_visualization_collab_admin_form'),
+    'access arguments'=>array('access user'),
+    );
+
+
+    return $items;
+}
+
+function log_data_visualization_collab_admin_form($form ,&$form_state) {
+   
+	$form['user']=array(
+		'#title'=>'Enter the user name',
+		'#type'=>'textfield',
+		'#description'=>'Enter the user name whose top 10 viewed articles and corresponding tags are to be displayed ',
+		'default'=>"",
+		);
+   
+   $form['submit_button'] = array(
+  '#type' => 'submit',
+  '#value' => t('Click to view top 10 viewed articles by user'),
+  '#submit' => array('log_data_visualization_collab_select'),
+  );
+    
+
+
+  return $form;
+  }
+
+function log_data_visualization_collab_select($form,&$form_state)
+{ $username=$form_state['values']['user'];
+  $arg=array('query'=>array('username'=>$username,));
+  drupal_goto('collab',$arg);
+}
+
+function log_data_visualization_collab_view() {
+$usern=$_GET['username'];
+
+$query = "select tid1.description, tname.name from (select t.description, COUNT(t.operation) as co,t.ref_numeric FROM event_log t, node n , users u where t.ref_numeric=n.nid and n.type like '%article%'  and t.type='node' and t.operation='view' and u.name='".$usern."' and u.uid=t.uid group by t.description order by co DESC limit 10) as tid1,taxonomy_index as tid2,taxonomy_term_data as tname where tname.tid=tid2.tid and tid2.nid=tid1.ref_numeric";
+
+  $result=db_query($query);
+  $ar=array();
+  $final_ar=array();
+  $results=$result->fetchAll(PDO::FETCH_ASSOC);
+  if(count($results)==0)
+  	return "<strong>No Log Data</strong>";
+  $header=['Article','Tags'];
+  $prev="..";
+  $k=0;
+  foreach($results as $res) {
+  	$cur=strval($res['description']);
+  	if($cur!=$prev&&$prev!=".."){
+  	array_push($final_ar,$ar);
+  	$ar[1]="";
+  	//$k=0;	
+  	}
+    //$k++;
+    $ar[0]=strval($res['description']);
+    //if($k%2==0)
+    $ar[1].=$res['name']."<br>";
+	//else $ar[1].=$res['name'].",";
+   	
+    
+  	$prev=$cur;
+  }
+  array_push($final_ar,$ar);
+  $article['maintable']=array(
+    '#theme'=>'table',
+    '#header'=>$header,
+    '#rows'=>$final_ar,
+    );
+  return $article;
+}
+
+
+?>

@@ -16,10 +16,6 @@ function log_data_visualization_analysis_permission() {
       'title' => t('Administer Viztwo'),
       'description' => t('Access administration viztwo on my site.'),
     ),
-    'access vizthree' => array(
-      'title' => t('Administer Vizthree'),
-      'description' => t('Access administration vizthree on my site.'),
-    ),
     'access config' =>array(
       'title'=>t('Configuration page'),
       'description'=>t('Access configuration Page for log analysis'),
@@ -48,13 +44,7 @@ function log_data_visualization_analysis_menu() {
     'access callback' => TRUE,
     'page callback' => 'log_data_visualization_analysis_bar',
     'type' => MENU_LOCAL_TASK,    );
-   $items['viz/vizthree'] = array(
-          'title' => 'Pie chart',
-    'description' => 'Uses d3 module to create a pie chart.',
-    'access callback' => TRUE,
-    'page callback' => 'log_data_visualization_analysis_pie',
-    'type' => MENU_LOCAL_TASK,
-    );
+  
 
    $items['admin/config/log_data_visualization_analysis']=array(
     'title'=>'Config page for log analysis',
@@ -80,7 +70,7 @@ function log_data_visualization_analysis_select($form,&$form_state)
 function log_data_visualization_analysis_linegraph() {
  
   $leg_aux=array();
-  $query2="Select distinct(operation) from event_log ";
+  $query2="Select distinct(operation) from event_log where type !='authentication'";
   $k=1;
   $operate=array();
   $operatio=db_query($query2);
@@ -95,7 +85,7 @@ function log_data_visualization_analysis_linegraph() {
     array_push($leg,strval($key));
     
   }
-  $query="Select operation, created from event_log ";
+  $query="Select operation, created from event_log where type !='authentication' ";
   $result=db_query($query);
   $results=$result->fetchAll(PDO::FETCH_ASSOC);
   $arr=array();
@@ -152,7 +142,7 @@ function log_data_visualization_analysis_column() {
  */
   function log_data_visualization_analysis_bar() {
 
-  $query = db_query("SELECT operation, count(*) FROM {event_log} GROUP BY operation");
+  $query = db_query("SELECT operation, count(*) FROM {event_log} where type != :type GROUP BY operation",array(':type'=>'authentication'));
   $result = $query->fetchAll(PDO::FETCH_ASSOC);
   $newarray=array();
  if(count($result)==0)
@@ -176,45 +166,7 @@ function log_data_visualization_analysis_column() {
   return d3_draw($chart);
 }
 
-/**
- * Generates a random pie chart example.
- *
- * @return string
- *   HTML for the page.
- */
-function log_data_visualization_analysis_pie() {
-  $query='SELECT uid,count(operation) FROM event_log GROUP BY uid';
-  $result=db_query($query);
-  $results= $result->fetchAll(PDO::FETCH_ASSOC);   
-   if(count($results)==0)
-  return "<strong>No Log Data</strong>";
-  $ar=array();
-  $final_ar=array();
-  $query2='SELECT * FROM users';
-  $users = array();
-  $temp=array();
-  $userresult=db_query($query2);
-  $userresults=$userresult->fetchAll(PDO::FETCH_ASSOC);
-    
-  foreach ($userresults as $row) {
-    if($row['uid']==0)
-      $users[$row['uid']]='Anonymous';
-    else $users[$row['uid']]=strval($row['name']);
-      
-    } 
-  foreach($results as $res) {
-    $ar[0]=strval($users[$res['uid']]);
-    $ar[1]=$res['count(operation)'];
-    array_push($final_ar,$ar);
-  }
-  $chart = array(
-    'id' => 'visualization',
-    'type' => 'piechart',
-    'rows' => $final_ar,
-  );
-  return d3_draw($chart);
-}
-
 
 ?>
+
 
