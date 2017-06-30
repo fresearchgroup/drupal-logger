@@ -1,0 +1,80 @@
+<?php
+/**
+*implements hook_permission
+*/
+function log_data_visualization_article_permission() {
+  return array(
+    'access art' => array(
+      'title' => t('Administer User'),
+      'description' => t('Access administration user on my site.'),
+    ),
+    'access user' => array(
+      'title' => t('Administer User Event Analysis'),
+      'description' => t('Access administration for user versus operation analysis.'),
+    ),
+  );
+}
+
+/**
+*implements hook_menu
+*/
+function log_data_visualization_article_menu() {
+    $items['art'] = array('title' => 'Top 10 Viewed Articles',
+    'description' => 'This page shows top 10 viewed articles',
+    'access callback'=>true,
+    'page callback' => 'log_data_visualization_article_view',
+    'access arguments' => array('access art'),
+    ); 
+   $items['admin/config/log_data_visualization_article']=array(
+    'title'=>'Configuration page for log analysis',
+    'page callback' => 'drupal_get_form',
+	'page arguments'=>array('log_data_visualization_article_admin_form'),
+    'access arguments'=>array('access user'),
+    );
+
+
+    return $items;
+}
+
+function log_data_visualization_article_admin_form($form ,&$form_state) {
+   
+   $form['submit_button'] = array(
+  '#type' => 'submit',
+  '#value' => t('Click to view top 10 viewed articles'),
+  '#submit' => array('log_data_visualization_article_select'),
+  );
+    return $form;
+
+  }
+
+function log_data_visualization_article_select($form,&$form_state)
+{ 
+  drupal_goto('art');
+}
+  
+
+function log_data_visualization_article_view() {
+
+$query = "select t.description, COUNT(t.operation) as co FROM event_log t, node n where t.ref_numeric=n.nid and n.type like '%article%'  and t.type='node' and t.operation='view' group by t.description order by co DESC limit 10";
+
+  $result=db_query($query);
+  $ar=array();
+  $final_ar=array();
+  $results=$result->fetchAll(PDO::FETCH_ASSOC);
+  if(count($results)==0)
+  	return "<strong>No Log Data</strong>";
+  $header=['Article','Views'];
+  foreach($results as $res) {
+    $ar[0]=strval($res['description']);
+    $ar[1]=$res['co'];
+    array_push($final_ar,$ar);
+  }
+  $table['maintable']=array(
+    '#theme'=>'table',
+    '#header'=>$header,
+    '#rows'=>$final_ar,
+    );
+  return $table;
+}
+?>
+
