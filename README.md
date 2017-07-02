@@ -26,7 +26,6 @@ Namely,
 Since data visualization is imperative and indispensable to business and data analytics, drupal-logger comes with four pellucid visualizations.
 Namely,
 
-* Force Directed Graph based on page ranking
 * Log Data Visualization
 * Log data Visualization User
   
