@@ -7,7 +7,7 @@ provided in which you can relate for instance a node to its events. You could
 use this to display the total number of views, or the number of times that the
 node has been modified and by which users.
 
-Currently, the following events are supported3333333:
+Currently, the following events are supported:
 * User authentication (login/logout/request password)
 * Node operations (CRUD)
 * User operations (CRUD)
@@ -23,7 +23,7 @@ Namely,
 * Backup event_log database content.
 * Notify Illegal access to authorized user.
 
-Since data visualization is imperative and indispensable to business and data analytics, drupal-logger comes with four pellucid visualizations.
+Since data visualization is imperative and indispensable to business and data analytics, drupal-logger comes with three pellucid visualizations.
 Namely,
 
 * Log Data Visualization
