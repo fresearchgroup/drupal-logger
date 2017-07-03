@@ -1,10 +1,11 @@
 <?php
 /**
 *@file
-*File Log module
+*Event Log File Module
+*@author SURAJ KOTHAWADE <kothawadesuraj@sggs.ac.in> 
 */
 /**
-*implementation of hook permission
+*Implementation of hook_permission
 */
 function event_log_file_permission() {
   return array(
@@ -15,7 +16,7 @@ function event_log_file_permission() {
   );
 }
 /**
-*implementation of hook_menu
+*Implementation of hook_menu
 */
 function event_log_file_menu() {
    $items['admin/config/event_log_file'] = array(
@@ -28,7 +29,10 @@ function event_log_file_menu() {
 return $items;
 }
 /**
-* implementation of delete log admin form
+*Implementation of event_log_delete_admin_form
+*@param $form :associative array to contain information related to form elements.
+*@param $form_state :associative array contaning values realted to elemnts in the form.
+*@return $form   :associtaive array which has information to form elements. 
 */
 function event_log_file_admin_form($form ,&$form_state) {
   

@@ -1,6 +1,10 @@
 <?php
 /**
-*implements hook_permission
+ * @file
+ *'Log Data Visualization User Module' gives top n most active users and pie chart of a perticular user. 
+*/
+/**
+*Implementataion of hook_permission
 */
 function log_data_visualization_user_permission() {
   return array(
@@ -20,7 +24,7 @@ function log_data_visualization_user_permission() {
 }
 
 /**
-*implements hook_menu
+*Implementataion of hook_menu
 */
 function log_data_visualization_user_menu() {
     $items['vizu'] = array('title' => 'User Event Analysis',
@@ -43,7 +47,12 @@ function log_data_visualization_user_menu() {
 
     return $items;
 }
-
+/**
+*Implementation of log_data_visualization_user_admin_form
+*@param $form :associative array to contain information related to form elements.
+*@param $form_state :associative array contaning values realted to elemnts in the form.
+*@return $form   :associtaive array which has information to form elements. 
+*/
 function log_data_visualization_user_admin_form($form ,&$form_state) {
     
   $form['enter_number'] = array(
@@ -73,7 +82,13 @@ function log_data_visualization_user_admin_form($form ,&$form_state) {
     return $form;
 
   }
-
+/**
+*Implementation of log_data_visualization_user_select 
+*Redirects to page which shows the top 10 aricles with related tags for each article for perticular user.
+*@param $form :associative array to contain information related to form elements.
+*@param $form_state :associative array contaning values realted to elemnts in the form.
+*@return void
+*/
 function log_data_visualization_user_select($form,&$form_state)
 { 
   $user=$form_state['values']['enter_user'];
@@ -86,7 +101,12 @@ if(count($results)>0)
   drupal_goto('vizu',$arg);
   }
   
-
+/**
+ * Generates pie graph for distinct operations distribution for a perticular user
+ *
+ * @return string
+ *   HTML for the page content.
+ */
 function log_data_visualization_user_pie() {
 if(isset($_GET['userid']))
 	$var=intval($_GET['userid']);
@@ -115,6 +135,13 @@ $query = "SELECT operation,count(operation) FROM `event_log` WHERE uid=".$var." 
   return d3_draw($chart);
   
 }
+/**
+*Implementation of log_data_visualization_user_select_number 
+*Redirects to page which shows the top n active users.
+*@param $form :associative array to contain information related to form elements.
+*@param $form_state :associative array contaning values realted to elemnts in the form.
+*@return void
+*/
 function log_data_visualization_user_select_number($form,&$form_state)
 { 
   $user=$form_state['values']['enter_number'];
@@ -122,6 +149,12 @@ function log_data_visualization_user_select_number($form,&$form_state)
   $arg=array('query'=>array('usernum'=>$user,),);
   drupal_goto('vizactive',$arg);
   }
+/**
+*Implementation of log_data_visualization_user_active
+* Finds top n active users using database event_log.
+* @return renderable arraycontaning elements to view on page 'vizactive'.
+* An associatiev array which is used to construct table on page 'vizactive'.   
+*/
 function log_data_visualization_user_active()
 {
 if(isset($_GET['usernum']))

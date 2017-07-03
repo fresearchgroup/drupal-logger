@@ -1,10 +1,12 @@
 <?php
 /**
 *@file
-*backup content module
+*Event Log Backup module
+*@author Akskay sharma <akshay31057@gmail.com>
 */
 /**
-*implementation of hook permission
+*Implementation of hook_permission 
+*
 */
 function event_log_backup_permission() {
   return array(
@@ -17,8 +19,8 @@ function event_log_backup_permission() {
 
 
 /**
-** Implement hook_menu 
-**
+*Implementation of hook_menu 
+*
 */
 function event_log_backup_menu() {
    $items['admin/config/event_log_backup'] = array(
@@ -27,13 +29,16 @@ function event_log_backup_menu() {
   'page callback' => 'drupal_get_form',
 'page arguments'=>array('event_log_backup_admin_form'),
 'access arguments'=>array('administer backup'),
-  // Page callback, etc. need to be added here.
+  
 );
 return $items;
 }
 
 /*
-** implement admin form 
+* Implementation of event_log_admin_form
+*@param $form :associative array to contain information related to form elements.
+*@param $form_state :associative array contaning values realted to elemnts in the form.
+*@return $form   :associtaive array which has information to form elements.  
 */
 function event_log_backup_admin_form($form ,&$form_state) {
  
@@ -67,7 +72,10 @@ function event_log_backup_admin_form($form ,&$form_state) {
 
 }
 
-/*implementing reading of backup content */
+/**
+*Implementation of event_log_backup_read 
+*Read logs from event_log table from drupal database.
+*/
 function event_log_backup_read(){
 $query='select * from event_log;';
 
@@ -84,7 +92,10 @@ $query='select * from event_log;';
 file_save_data($text,"public://backup.txt",FILE_EXISTS_RENAME);
 }
 
-/* Implementing sending of backup data */
+/**
+*Implementation of event_log_backup_send
+*Sends the database via email to administrator.
+*/
 function event_log_backup_send(){
   $site_mail = variable_get('site_mail','');  
   drupal_mail('event_log_backup','event_log_backup_email',$site_mail,language_default());
@@ -93,7 +104,8 @@ function event_log_backup_send(){
 
 
 /**
-* implementation of hook cron
+*Implementation of hook_cron
+*Run when enabled to run and backup and send the logs in event_log table.
 */
 
 function event_log_backup_cron() {
@@ -106,7 +118,8 @@ function event_log_backup_cron() {
 }
 
 /**
-*implementation of hook mail
+*Implementation of hook_mail
+*Mails the backup to administrator.
 */
 
 function event_log_backup_mail($key, &$message, $params) {

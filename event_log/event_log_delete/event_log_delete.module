@@ -1,10 +1,11 @@
 <?php
 /**
 *@file
-*cron monitor module
+*Event Log Delete Module
+*@author Akskay sharma <akshay31057@gmail.com>
 */
 /**
-*implementation of hook permission
+*Implementation of hook_permission
 */
 function event_log_delete_permission() {
   return array(
@@ -15,7 +16,7 @@ function event_log_delete_permission() {
   );
 }
 /**
-*implemenatation of hook_menu
+*Implemenatation of hook_menu
 */
 function event_log_delete_menu() {
    $items['admin/config/event_log_delete'] = array(
@@ -29,7 +30,10 @@ return $items;
 }
 
 /**
-* implements delete log admin form
+*Implementation of event_log_delete_admin_form
+*@param $form :associative array to contain information related to form elements.
+*@param $form_state :associative array contaning values realted to elemnts in the form.
+*@return $form   :associtaive array which has information to form elements. 
 */
 
 function event_log_delete_admin_form($form ,&$form_state) {
@@ -43,8 +47,8 @@ function event_log_delete_admin_form($form ,&$form_state) {
 }
 /**
 *
-* Implements  Deletion of event_log table
-*
+*Implementation of event_log_delete_deletedb
+*Delete all entries in event_log table from drupal database.
 */
 function event_log_delete_deletedb(){
          $query="delete from event_log;";

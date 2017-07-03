@@ -1,6 +1,10 @@
 <?php
 /**
-* implementataion OF hook_permission
+ * @file
+ *'Log Data Visualization Analysis Module' visualizes event_log data to admin using D3 graphics. 
+*/
+/**
+*Implementataion of hook_permission
 */
 function log_data_visualization_analysis_permission() {
   return array(
@@ -23,9 +27,8 @@ function log_data_visualization_analysis_permission() {
   );
 }
 /**
-* implementation of hook_menu
+* Implementation of hook_menu
 */
-
 function log_data_visualization_analysis_menu() {
    $items['viz'] = array('title' => 'Event Log Visualizations',
     'description' => 'Different event log visualizations using d3.',
@@ -54,7 +57,12 @@ function log_data_visualization_analysis_menu() {
     );
     return $items;
 }
-
+/**
+*Implementation of log_data_visualization_analysis_admin_form
+*@param $form :associative array to contain information related to form elements.
+*@param $form_state :associative array contaning values realted to elemnts in the form.
+*@return $form   :associtaive array which has information to form elements. 
+*/
 function log_data_visualization_analysis_admin_form($form ,&$form_state) {
       $form['submit_button'] = array(
   '#type' => 'submit',
@@ -63,10 +71,23 @@ function log_data_visualization_analysis_admin_form($form ,&$form_state) {
   );
     return $form;
   }
+/**
+*Implementation of log_data_visualization_analysis_select 
+*Redirects to the visualization page.
+*@param $form :associative array to contain information related to form elements.
+*@param $form_state :associative array contaning values realted to elemnts in the form.
+*@return void
+*/
 function log_data_visualization_analysis_select($form,&$form_state)
 {  
   drupal_goto('viz');
 }
+/**
+ * Generates line graph for distinct operations distribution for every month
+ *
+ * @return string
+ *   HTML for the page content.
+ */
 function log_data_visualization_analysis_linegraph() {
  
   $leg_aux=array();
@@ -128,14 +149,8 @@ function log_data_visualization_analysis_linegraph() {
 
   return d3_draw($chart);
 }
-function log_data_visualization_analysis_column() {
-
-  
-  return d3_draw($chart);
-}
-
 /**
- * Generates a random example bar graph.
+ * Generates bar graph for distinct operations from event_log table in drupal database  
  *
  * @return string
  *   HTML for the page content.

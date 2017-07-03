@@ -11,4 +11,4 @@ php="7.0.18"
 project = "event_log"
 datestamp = "1484645888"
 
-configure = admin/config/event_log_fdg
+;configure = admin/config/event_log_fdg

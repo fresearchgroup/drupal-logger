@@ -1,6 +1,10 @@
 <?php
+/**
+ * @file
+ *'Log Data Visualization Collab Module' gives top 10 most viewed articles. 
+*/
  /**
-*implements hook_permission
+*Implementataion of hook_permission
 */
 function log_data_visualization_collab_permission() {
   return array(
@@ -16,7 +20,7 @@ function log_data_visualization_collab_permission() {
 }
 
 /**
-*implements hook_menu
+*Implementataion of hook_menu
 */
 function log_data_visualization_collab_menu() {
     $items['collab'] = array('title' => 'Top 10 Viewed Articles By User',
@@ -34,7 +38,12 @@ function log_data_visualization_collab_menu() {
 
     return $items;
 }
-
+/**
+*Implementation of log_data_visualization_collab_admin_form
+*@param $form :associative array to contain information related to form elements.
+*@param $form_state :associative array contaning values realted to elemnts in the form.
+*@return $form   :associtaive array which has information to form elements. 
+*/
 function log_data_visualization_collab_admin_form($form ,&$form_state) {
    
 	$form['user']=array(
@@ -54,13 +63,24 @@ function log_data_visualization_collab_admin_form($form ,&$form_state) {
 
   return $form;
   }
-
+/**
+*Implementation of log_data_visualization_collab_select 
+*Redirects to page which shows the top 10 aricles with related tags for each article for perticular user.
+*@param $form :associative array to contain information related to form elements.
+*@param $form_state :associative array contaning values realted to elemnts in the form.
+*@return void
+*/
 function log_data_visualization_collab_select($form,&$form_state)
 { $username=$form_state['values']['user'];
   $arg=array('query'=>array('username'=>$username,));
   drupal_goto('collab',$arg);
 }
-
+/**
+*Implementation of log_data_visualization_collab_view
+* Finds most viewed articles using databases event_log ,node,users,.
+* @return renderable arraycontaning elements to view on page 'collab'.
+* An associatiev array which is used to construct table on page 'collab'.   
+*/
 function log_data_visualization_collab_view() {
 if(isset($_GET['username']))
 $usern=$_GET['username'];

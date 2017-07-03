@@ -1,6 +1,10 @@
 <?php
 /**
-*implements hook_permission
+ * @file
+ *'Log Data Visualization Article Module' gives top 10 most viewed articles. 
+*/
+/**
+*Implementataion of hook_permission
 */
 function log_data_visualization_article_permission() {
   return array(
@@ -16,7 +20,7 @@ function log_data_visualization_article_permission() {
 }
 
 /**
-*implements hook_menu
+*Implementataion of hook_menu
 */
 function log_data_visualization_article_menu() {
     $items['art'] = array('title' => 'Top 10 Viewed Articles',
@@ -35,7 +39,12 @@ function log_data_visualization_article_menu() {
 
     return $items;
 }
-
+/**
+*Implementation of log_data_visualization_article_admin_form
+*@param $form :associative array to contain information related to form elements.
+*@param $form_state :associative array contaning values realted to elemnts in the form.
+*@return $form   :associtaive array which has information to form elements. 
+*/
 function log_data_visualization_article_admin_form($form ,&$form_state) {
    
    $form['submit_button'] = array(
@@ -46,12 +55,23 @@ function log_data_visualization_article_admin_form($form ,&$form_state) {
     return $form;
 
   }
-
+/**
+*Implementation of log_data_visualization_article_select 
+*Redirects to the table page which shows the top 10 aricle.
+*@param $form :associative array to contain information related to form elements.
+*@param $form_state :associative array contaning values realted to elemnts in the form.
+*@return void
+*/
 function log_data_visualization_article_select($form,&$form_state)
 { 
   drupal_goto('art');
 }
-  
+ /**
+*Implementation of log_data_visualization_article_view
+* Finds most vieved articles using databases event_log ,node.
+* @return renderable arraycontaning elements to view on page 'art'.
+* An associatiev array which is used to construct table on page 'art'.   
+*/ 
 
 function log_data_visualization_article_view() {
 
