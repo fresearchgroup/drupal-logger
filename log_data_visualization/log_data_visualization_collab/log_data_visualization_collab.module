@@ -62,12 +62,21 @@ function log_data_visualization_collab_select($form,&$form_state)
 }
 
 function log_data_visualization_collab_view() {
+if(isset($_GET['username']))
 $usern=$_GET['username'];
+else {
+  $q2="select name from users where uid=1";
+  $res=db_query($q2);
+  $rest=$res->fetchAll(PDO::FETCH_ASSOC);
+  $usern=strval($rest[0]['name']);
+}
 
 $query = "select tid1.description, tname.name from (select t.description, COUNT(t.operation) as co,t.ref_numeric FROM event_log t, node n , users u where t.ref_numeric=n.nid and n.type like '%article%'  and t.type='node' and t.operation='view' and u.name='".$usern."' and u.uid=t.uid group by t.description order by co DESC limit 10) as tid1,taxonomy_index as tid2,taxonomy_term_data as tname where tname.tid=tid2.tid and tid2.nid=tid1.ref_numeric";
 
   $result=db_query($query);
   $ar=array();
+  $ar[0]="";
+  $ar[1]="";
   $final_ar=array();
   $results=$result->fetchAll(PDO::FETCH_ASSOC);
   if(count($results)==0)
@@ -76,18 +85,17 @@ $query = "select tid1.description, tname.name from (select t.description, COUNT(
   $prev="..";
   $k=0;
   foreach($results as $res) {
+  	
   	$cur=strval($res['description']);
   	if($cur!=$prev&&$prev!=".."){
   	array_push($final_ar,$ar);
   	$ar[1]="";
-  	//$k=0;	
   	}
-    //$k++;
+    
     $ar[0]=strval($res['description']);
-    //if($k%2==0)
+    
     $ar[1].=$res['name']."<br>";
-	//else $ar[1].=$res['name'].",";
-   	
+	 	
     
   	$prev=$cur;
   }
