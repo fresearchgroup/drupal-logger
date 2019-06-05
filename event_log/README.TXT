@@ -10,8 +10,6 @@ CONTENTS OF THIS FILE
 INTRODUCTION
 ------------
 
-Current Maintainers: Reinder Brandsma <reinder@cipix.nl>, Edwin van Buuringen <edwin@cipix.nl>, Tarik Laasri <tarik@cipix.nl>
-
 This module logs specific events. The events are saved in the database and can
 be viewed on the page admin/reports/events. Furthermore, a views integration is
 provided in which you can relate for instance a node to its events. You could
